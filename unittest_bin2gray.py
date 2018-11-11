@@ -13,22 +13,23 @@ import unittest
 from myhdl import Simulation, Signal, delay, intbv, bin
 
 # from bin2gray import bin2gray
-from .cosim_bin2gray import bin2gray
+from cosim_bin2gray import bin2gray
 
-MAX_WIDTH = 11
+MAX_WIDTH = 2
 
 
 class TestGrayCodeProperties(unittest.TestCase):
 
     def testSingleBitChange(self):
         """Check that only one bit changes in successive codewords."""
-
+        # print('test1')
         def test(B, G):
             w = len(B)
             G_Z = Signal(intbv(0)[w:])
             B.next = intbv(0)
             yield delay(10)
             for i in range(1, 2**w):
+                print('i, ', i)
                 G_Z.next = G
                 B.next = intbv(i)
                 yield delay(10)
@@ -58,10 +59,13 @@ class TestGrayCodeProperties(unittest.TestCase):
         for w in range(1, MAX_WIDTH):
             B = Signal(intbv(0)[w:])
             G = Signal(intbv(0)[w:])
+            # print(0)
             dut = bin2gray(B, G)
             check = test(B, G)
             sim = Simulation(dut, check)
+            # print(1)
             sim.run(quiet=1)
+            # print(2)
 
 
 if __name__ == '__main__':
